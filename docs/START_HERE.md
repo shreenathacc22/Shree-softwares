@@ -7,6 +7,7 @@
 | 👩‍🎓 **Student / Parent** (just want to use the app) | **`USER_GUIDE_Precalc_Tutor.md`** | Requirements, installing the .exe step-by-step, signing in, how lessons/practice/mastery/review work, backing up progress, FAQ |
 | 🔧 **Administrator / Owner** (setup, rebuild, publish) | **`SOP_Precalc_Tutor_Operations.md`** | Full operations manual: install (SOP-1), Google OAuth (SOP-2), config & user access (SOP-3), rebuild (SOP-4), GitHub updates (SOP-5), troubleshooting (SOP-6) |
 | 🔐 **Doing the one-time Google setup** | **`GOOGLE_OAUTH_SETUP.md`** | Deep-dive walkthrough of creating the Google Client ID + config.json, with troubleshooting table |
+| ✏️ **Pasting credentials into config.json** | **`SOP_Config_Credentials_Setup.md`** | Worked BEFORE➜AFTER example, edit rules, 5-point verification checklist, multi-laptop rollout |
 | ⚡ **In a hurry** | **`README_INSTALL.txt`** | One-page quick install reference |
 
 ## Files in this folder

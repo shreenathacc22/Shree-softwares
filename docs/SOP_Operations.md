@@ -11,6 +11,7 @@
 - `START_HERE.md` — which document to read, by audience
 - `USER_GUIDE_Precalc_Tutor.md` — student/parent guide (requirements, using the exe, app walkthrough, FAQ)
 - `GOOGLE_OAUTH_SETUP.md` — deep-dive Google credential walkthrough (companion to SOP-2)
+- `SOP_Config_Credentials_Setup.md` — filling config.json with a worked example + verification checklist (companion to SOP-3)
 - `README_INSTALL.txt` — one-page quick install reference
 - **This SOP** — administrator/owner operations
 

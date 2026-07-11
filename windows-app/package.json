@@ -1,0 +1,54 @@
+{
+  "name": "Shree-Shetty-Precalc-Tutor",
+  "productName": "Shree Shetty's Precalc Tutor",
+  "version": "1.0.0",
+  "description": "Offline Precalculus & Calculus tutor with Google Sign-In",
+  "author": "Shree Shetty's Precalc Tutor <shreenathacc22@gmail.com>",
+  "main": "electron/main.js",
+  "scripts": {
+    "start": "electron .",
+    "dist": "electron-builder"
+  },
+  "devDependencies": {
+    "electron": "latest",
+    "electron-builder": "latest"
+  },
+  "build": {
+    "appId": "com.shreeshetty.precalctutor",
+    "productName": "Shree Shetty's Precalc Tutor",
+    "directories": {
+      "output": "release"
+    },
+    "files": [
+      "electron/**/*",
+      "app/**/*"
+    ],
+    "extraResources": [
+      {
+        "from": "config.json",
+        "to": "config.json"
+      }
+    ],
+    "win": {
+      "target": [
+        {
+          "target": "nsis",
+          "arch": ["x64"]
+        },
+        {
+          "target": "zip",
+          "arch": ["x64"]
+        }
+      ],
+      "artifactName": "${productName}-${version}-${arch}.${ext}"
+    },
+    "nsis": {
+      "oneClick": false,
+      "perMachine": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "Shree Shetty's Precalc Tutor"
+    }
+  }
+}

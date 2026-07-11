@@ -1,0 +1,19 @@
+# dependencies
+node_modules/
+
+# build output
+dist/
+release/
+*.exe
+*.zip
+*.dmg
+*.blockmap
+
+# real credentials (commit only config.template.json)
+windows-app/config.json
+
+# local tooling
+.claude/
+*.log
+Thumbs.db
+.DS_Store

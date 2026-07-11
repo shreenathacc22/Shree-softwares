@@ -1,0 +1,10 @@
+{
+  "_README": "Paste your Google OAuth Desktop-app credentials below. See GOOGLE_OAUTH_SETUP.md. You can edit this file after installing WITHOUT rebuilding — it lives next to the app in the 'resources' folder, and a copy is also read from your user data folder if present.",
+  "google": {
+    "clientId": "PASTE_YOUR_CLIENT_ID_HERE.apps.googleusercontent.com",
+    "clientSecret": "PASTE_YOUR_CLIENT_SECRET_HERE"
+  },
+  "allowedEmails": [
+    "shreenathacc22@gmail.com"
+  ]
+}

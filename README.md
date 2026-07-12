@@ -1,7 +1,7 @@
 # High School Pre-Calculus Program (L1–L2)
 
 An offline-first high-school math tutor — Foundations → Precalculus → a first
-taste of Calculus. 12 units, 38 skills, auto-generated practice problems,
+taste of Calculus. 13 units, 50 skills (v1.2), auto-generated practice problems,
 spaced-repetition review, and mastery-gated progression. Built by **Shree Shetty**.
 
 ## Repository layout
@@ -10,7 +10,8 @@ spaced-repetition review, and mastery-gated progression. Built by **Shree Shetty
 |---|---|
 | [`highschool-precalculus-tutor/`](highschool-precalculus-tutor/) | The web app source — React 18 + TypeScript + Vite. Builds to a **single self-contained `index.html`** that runs offline in any browser. |
 | [`windows-app/`](windows-app/) | Electron packaging that wraps the built app into an installable Windows program (installer `.exe` + portable `.zip`) with a **Google Sign-In** gate. |
-| [`docs/`](docs/) | Full design spec, build spec, and files index. |
+| [`macos-app/`](macos-app/) | **macOS-specific build** — native launcher app + drag-install `.dmg` packaging (no Electron; the single-file web app is embedded directly in a lightweight app bundle). |
+| [`docs/`](docs/) | Full design spec, build spec, changelog, and files index. |
 
 ## Build the web app
 
@@ -32,6 +33,18 @@ npm run dist         # -> release/*.exe (installer) + release/*.zip (portable)
 
 Requires Node.js 18+ on Windows 10/11. Binaries are intentionally **not**
 committed (100 MB+); rebuild them with the two commands above.
+
+## Build the macOS app
+
+```bash
+cd macos-app
+./build-dmg.sh       # -> release/Precalc-Tutor-<version>.dmg (drag-install)
+```
+
+Requires macOS with Node.js 18+ (`hdiutil` ships with macOS). See
+[`macos-app/README.md`](macos-app/README.md) for how the bundle works and for
+an alternative multi-account shared-Mac deployment. Like the Windows build,
+`.dmg` binaries are not committed — rebuild with the command above.
 
 ## Google Sign-In setup
 

@@ -389,6 +389,422 @@ const unitCircleValue: Generator = (): Problem => {
   };
 };
 
+// Pythagorean triples used for exact-fraction trig values.
+const TRIG_TRIPLES: [number, number, number][] = [
+  [3, 4, 5],
+  [6, 8, 10],
+  [5, 12, 13],
+  [8, 15, 17],
+  [7, 24, 25],
+  [20, 21, 29],
+];
+
+const reciprocalQuotientIdentity: Generator = (): Problem => {
+  const items: { expr: string; simplified: string; distractors: { label: string; misconception: string }[] }[] = [
+    {
+      expr: "\\sec\\theta\\cdot\\cot\\theta",
+      simplified: "\\csc\\theta",
+      distractors: [
+        { label: "$\\sec\\theta$", misconception: "Rewrite both factors in sine and cosine first, then cancel." },
+        { label: "$\\tan\\theta$", misconception: "Cotangent is cos/sin, not sin/cos — the cosines cancel here." },
+        { label: "$1$", misconception: "Only one factor cancels; a $\\frac{1}{\\sin\\theta}$ remains." },
+      ],
+    },
+    {
+      expr: "\\tan\\theta\\cdot\\csc\\theta",
+      simplified: "\\sec\\theta",
+      distractors: [
+        { label: "$\\csc\\theta$", misconception: "Rewrite $\\tan\\theta=\\frac{\\sin\\theta}{\\cos\\theta}$: the sines cancel, leaving $\\frac{1}{\\cos\\theta}$." },
+        { label: "$\\cot\\theta$", misconception: "Multiplying by cosecant cancels the sine in tangent, not the cosine." },
+        { label: "$\\sin\\theta$", misconception: "Check: $\\frac{\\sin\\theta}{\\cos\\theta}\\cdot\\frac{1}{\\sin\\theta} = \\frac{1}{\\cos\\theta}$." },
+      ],
+    },
+    {
+      expr: "\\dfrac{\\sin\\theta}{\\tan\\theta}",
+      simplified: "\\cos\\theta",
+      distractors: [
+        { label: "$\\sin\\theta$", misconception: "Dividing by $\\frac{\\sin\\theta}{\\cos\\theta}$ multiplies by its reciprocal $\\frac{\\cos\\theta}{\\sin\\theta}$." },
+        { label: "$\\sec\\theta$", misconception: "The result is cosine itself, not its reciprocal." },
+        { label: "$\\cot\\theta$", misconception: "The sines cancel completely — no sine remains in the answer." },
+      ],
+    },
+    {
+      expr: "\\cot\\theta\\cdot\\sin\\theta",
+      simplified: "\\cos\\theta",
+      distractors: [
+        { label: "$\\sin\\theta$", misconception: "Cotangent is $\\frac{\\cos\\theta}{\\sin\\theta}$; the sines cancel, leaving cosine." },
+        { label: "$\\tan\\theta$", misconception: "Cotangent, not tangent, appears here — its numerator is cosine." },
+        { label: "$\\csc\\theta$", misconception: "Nothing here produces a reciprocal of sine; the sines cancel." },
+      ],
+    },
+    {
+      expr: "\\dfrac{\\csc\\theta}{\\sec\\theta}",
+      simplified: "\\cot\\theta",
+      distractors: [
+        { label: "$\\tan\\theta$", misconception: "$\\frac{1/\\sin\\theta}{1/\\cos\\theta} = \\frac{\\cos\\theta}{\\sin\\theta}$, which is cotangent." },
+        { label: "$1$", misconception: "Cosecant and secant are reciprocals of different functions — they don't cancel." },
+        { label: "$\\sin\\theta\\cos\\theta$", misconception: "Dividing fractions multiplies by the reciprocal; the result is a ratio, not a product." },
+      ],
+    },
+  ];
+  const q = pick(items);
+  return {
+    prompt: `Simplify  $${q.expr}$.`,
+    answerType: "multiple-choice",
+    choices: mc(`$${q.simplified}$`, q.distractors),
+    hints: [
+      `Rewrite every factor using only $\\sin\\theta$ and $\\cos\\theta$.`,
+      `$\\sec = \\frac{1}{\\cos}$, $\\csc = \\frac{1}{\\sin}$, $\\tan = \\frac{\\sin}{\\cos}$, $\\cot = \\frac{\\cos}{\\sin}$ — then cancel.`,
+    ],
+    explanation: `Writing $${q.expr}$ in sines and cosines and cancelling gives $${q.simplified}$.`,
+  };
+};
+
+const pythagoreanIdentity: Generator = (): Problem => {
+  const [a, b, c] = pick(TRIG_TRIPLES);
+  // given sine (or cosine), find the other; quadrant decides sign
+  const givenSin = pick([true, false]);
+  const quadrant = pick([1, 2, 3, 4]);
+  const sinPos = quadrant === 1 || quadrant === 2;
+  const cosPos = quadrant === 1 || quadrant === 4;
+  const sinNum = (givenSin ? a : b) * (sinPos ? 1 : -1);
+  const cosNum = (givenSin ? b : a) * (cosPos ? 1 : -1);
+  const given = givenSin
+    ? { fn: "\\sin", num: sinNum }
+    : { fn: "\\cos", num: cosNum };
+  const want = givenSin
+    ? { fn: "\\cos", num: cosNum }
+    : { fn: "\\sin", num: sinNum };
+  const frac = (n: number) =>
+    `${n < 0 ? "-" : ""}\\dfrac{${abs(n)}}{${c}}`;
+  const quadName = ["I", "II", "III", "IV"][quadrant - 1];
+  return {
+    prompt: `If $${given.fn}\\theta = ${frac(given.num)}$ and $\\theta$ is in Quadrant ${quadName}, find $${want.fn}\\theta$. Enter a fraction like 4/5 or -4/5.`,
+    answerType: "numeric",
+    numericAnswer: want.num / c,
+    answerDisplay: `$${frac(want.num)}$`,
+    hints: [
+      `Use $\\sin^2\\theta + \\cos^2\\theta = 1$ to find the missing value up to sign.`,
+      `$${want.fn}^2\\theta = 1 - \\left(${frac(given.num)}\\right)^2 = \\dfrac{${abs(want.num) ** 2}}{${c * c}}$ — now pick the sign for Quadrant ${quadName}.`,
+    ],
+    explanation: `$${want.fn}^2\\theta = 1 - \\dfrac{${given.num * given.num}}{${c * c}} = \\dfrac{${want.num * want.num}}{${c * c}}$, so $${want.fn}\\theta = \\pm\\dfrac{${abs(want.num)}}{${c}}$. In Quadrant ${quadName}, ${want.fn === "\\sin" ? "sine" : "cosine"} is ${want.num > 0 ? "positive" : "negative"}: $${frac(want.num)}$.`,
+  };
+};
+
+const evenOddCofunction: Generator = (): Problem => {
+  const items: { expr: string; simplified: string; distractors: { label: string; misconception: string }[] }[] = [
+    {
+      expr: "\\sin(-\\theta)",
+      simplified: "-\\sin\\theta",
+      distractors: [
+        { label: "$\\sin\\theta$", misconception: "Sine is an odd function — negating the angle negates the value." },
+        { label: "$\\cos\\theta$", misconception: "Negating the angle doesn't change sine into cosine." },
+        { label: "$-\\cos\\theta$", misconception: "Reflection over the x-axis flips the y-coordinate (sine), keeping it a sine." },
+      ],
+    },
+    {
+      expr: "\\cos(-\\theta)",
+      simplified: "\\cos\\theta",
+      distractors: [
+        { label: "$-\\cos\\theta$", misconception: "Cosine is an even function — it ignores the sign of the angle." },
+        { label: "$\\sin\\theta$", misconception: "Negating the angle doesn't change cosine into sine." },
+        { label: "$-\\sin\\theta$", misconception: "Reflection over the x-axis keeps the x-coordinate (cosine) unchanged." },
+      ],
+    },
+    {
+      expr: "\\tan(-\\theta)",
+      simplified: "-\\tan\\theta",
+      distractors: [
+        { label: "$\\tan\\theta$", misconception: "Tangent is odd: $\\tan(-\\theta)=\\frac{-\\sin\\theta}{\\cos\\theta}=-\\tan\\theta$." },
+        { label: "$\\cot\\theta$", misconception: "Negating the angle doesn't swap tangent with cotangent — cofunctions come from complements." },
+        { label: "$-\\cot\\theta$", misconception: "Only the sign changes; the function stays a tangent." },
+      ],
+    },
+    {
+      expr: "\\sin\\left(\\tfrac{\\pi}{2}-\\theta\\right)",
+      simplified: "\\cos\\theta",
+      distractors: [
+        { label: "$\\sin\\theta$", misconception: "Complementary angles swap sine and cosine — that's the cofunction identity." },
+        { label: "$-\\cos\\theta$", misconception: "No sign change occurs for the cofunction of a complement." },
+        { label: "$-\\sin\\theta$", misconception: "This is a cofunction (complement) identity, not a negative-angle identity." },
+      ],
+    },
+    {
+      expr: "\\cos\\left(\\tfrac{\\pi}{2}-\\theta\\right)",
+      simplified: "\\sin\\theta",
+      distractors: [
+        { label: "$\\cos\\theta$", misconception: "Complementary angles swap cosine and sine — that's the cofunction identity." },
+        { label: "$-\\sin\\theta$", misconception: "No sign change occurs for the cofunction of a complement." },
+        { label: "$-\\cos\\theta$", misconception: "This is a cofunction (complement) identity, not a negative-angle identity." },
+      ],
+    },
+    {
+      expr: "\\sin(-\\theta)\\cos(-\\theta)",
+      simplified: "-\\sin\\theta\\cos\\theta",
+      distractors: [
+        { label: "$\\sin\\theta\\cos\\theta$", misconception: "Sine is odd, so exactly one negative sign survives the product." },
+        { label: "$-\\cos^2\\theta$", misconception: "Each factor keeps its own function; only the sine picks up a sign." },
+        { label: "$\\sin\\theta - \\cos\\theta$", misconception: "This is a product of the two identities, not a difference." },
+      ],
+    },
+  ];
+  const q = pick(items);
+  return {
+    prompt: `Simplify  $${q.expr}$.`,
+    answerType: "multiple-choice",
+    choices: mc(`$${q.simplified}$`, q.distractors),
+    hints: [
+      `Cosine is even; sine and tangent are odd. Cofunctions: $\\sin(\\tfrac{\\pi}{2}-\\theta)=\\cos\\theta$.`,
+      `Picture the unit circle: $-\\theta$ reflects the point over the x-axis, so $y$ flips and $x$ doesn't.`,
+    ],
+    explanation: `$${q.expr} = ${q.simplified}$.`,
+  };
+};
+
+const sumDifferenceFormula: Generator = (): Problem => {
+  const items: { prompt: string; correct: string; distractors: { label: string; misconception: string }[]; explanation: string }[] = [
+    {
+      prompt: "Find the exact value of $\\sin(75^\\circ)$.",
+      correct: "$\\dfrac{\\sqrt{6}+\\sqrt{2}}{4}$",
+      distractors: [
+        { label: "$\\dfrac{\\sqrt{6}-\\sqrt{2}}{4}$", misconception: "That's $\\sin(15^\\circ)$ — for $45^\\circ + 30^\\circ$ the sine formula uses a plus sign." },
+        { label: "$\\dfrac{\\sqrt{3}+\\sqrt{2}}{4}$", misconception: "Multiply the pairs fully: $\\frac{\\sqrt2}{2}\\cdot\\frac{\\sqrt3}{2}=\\frac{\\sqrt6}{4}$." },
+        { label: "$\\dfrac{\\sqrt{2}+1}{2}$", misconception: "Sine values never exceed 1 — recheck each product of exact values." },
+      ],
+      explanation: "$\\sin(45^\\circ+30^\\circ) = \\sin 45^\\circ\\cos 30^\\circ + \\cos 45^\\circ\\sin 30^\\circ = \\frac{\\sqrt6}{4} + \\frac{\\sqrt2}{4} = \\frac{\\sqrt6+\\sqrt2}{4}$.",
+    },
+    {
+      prompt: "Find the exact value of $\\cos(75^\\circ)$.",
+      correct: "$\\dfrac{\\sqrt{6}-\\sqrt{2}}{4}$",
+      distractors: [
+        { label: "$\\dfrac{\\sqrt{6}+\\sqrt{2}}{4}$", misconception: "For cosine of a sum the middle sign flips to minus: $\\cos A\\cos B - \\sin A\\sin B$." },
+        { label: "$\\dfrac{\\sqrt{2}-\\sqrt{6}}{4}$", misconception: "$75^\\circ$ is in Quadrant I, so its cosine must be positive." },
+        { label: "$\\dfrac{\\sqrt{3}-1}{4}$", misconception: "Keep the radicals: $\\frac{\\sqrt2}{2}\\cdot\\frac{\\sqrt3}{2}=\\frac{\\sqrt6}{4}$, not $\\frac{\\sqrt3}{4}$." },
+      ],
+      explanation: "$\\cos(45^\\circ+30^\\circ) = \\cos 45^\\circ\\cos 30^\\circ - \\sin 45^\\circ\\sin 30^\\circ = \\frac{\\sqrt6}{4} - \\frac{\\sqrt2}{4} = \\frac{\\sqrt6-\\sqrt2}{4}$.",
+    },
+    {
+      prompt: "Find the exact value of $\\cos(15^\\circ)$.",
+      correct: "$\\dfrac{\\sqrt{6}+\\sqrt{2}}{4}$",
+      distractors: [
+        { label: "$\\dfrac{\\sqrt{6}-\\sqrt{2}}{4}$", misconception: "For $\\cos(45^\\circ-30^\\circ)$ the sign flips to plus: $\\cos A\\cos B + \\sin A\\sin B$." },
+        { label: "$\\dfrac{\\sqrt{3}+\\sqrt{2}}{4}$", misconception: "Multiply the pairs fully: $\\frac{\\sqrt2}{2}\\cdot\\frac{\\sqrt3}{2}=\\frac{\\sqrt6}{4}$." },
+        { label: "$\\dfrac{2+\\sqrt{3}}{4}$", misconception: "This mixes up the half-angle form — use the difference formula directly." },
+      ],
+      explanation: "$\\cos(45^\\circ-30^\\circ) = \\cos 45^\\circ\\cos 30^\\circ + \\sin 45^\\circ\\sin 30^\\circ = \\frac{\\sqrt6+\\sqrt2}{4}$.",
+    },
+    {
+      prompt: "Find the exact value of $\\sin(15^\\circ)$.",
+      correct: "$\\dfrac{\\sqrt{6}-\\sqrt{2}}{4}$",
+      distractors: [
+        { label: "$\\dfrac{\\sqrt{6}+\\sqrt{2}}{4}$", misconception: "That's $\\sin(75^\\circ)$ — for $45^\\circ - 30^\\circ$ the sine formula uses a minus sign." },
+        { label: "$\\dfrac{\\sqrt{2}-\\sqrt{6}}{4}$", misconception: "$15^\\circ$ is in Quadrant I, so its sine must be positive." },
+        { label: "$\\dfrac{1-\\sqrt{3}}{4}$", misconception: "Keep the radicals from each product: $\\frac{\\sqrt2}{2}\\cdot\\frac{\\sqrt3}{2}=\\frac{\\sqrt6}{4}$." },
+      ],
+      explanation: "$\\sin(45^\\circ-30^\\circ) = \\sin 45^\\circ\\cos 30^\\circ - \\cos 45^\\circ\\sin 30^\\circ = \\frac{\\sqrt6-\\sqrt2}{4}$.",
+    },
+    {
+      prompt: "Which expression equals $\\sin(A+B)$?",
+      correct: "$\\sin A\\cos B + \\cos A\\sin B$",
+      distractors: [
+        { label: "$\\sin A\\cos B - \\cos A\\sin B$", misconception: "That's $\\sin(A-B)$; the sum formula keeps the plus sign." },
+        { label: "$\\cos A\\cos B - \\sin A\\sin B$", misconception: "That's $\\cos(A+B)$ — sine's formula mixes sine and cosine." },
+        { label: "$\\sin A + \\sin B$", misconception: "Sine doesn't distribute over addition — test with $A=B=45^\\circ$." },
+      ],
+      explanation: "$\\sin(A+B) = \\sin A\\cos B + \\cos A\\sin B$; matching signs for sine, flipped for cosine.",
+    },
+    {
+      prompt: "Which expression equals $\\cos(A-B)$?",
+      correct: "$\\cos A\\cos B + \\sin A\\sin B$",
+      distractors: [
+        { label: "$\\cos A\\cos B - \\sin A\\sin B$", misconception: "That's $\\cos(A+B)$ — for cosine the middle sign flips." },
+        { label: "$\\sin A\\cos B - \\cos A\\sin B$", misconception: "That's $\\sin(A-B)$ — cosine's formula pairs like functions." },
+        { label: "$\\cos A - \\cos B$", misconception: "Cosine doesn't distribute over subtraction — test with $A=B$." },
+      ],
+      explanation: "$\\cos(A-B) = \\cos A\\cos B + \\sin A\\sin B$; the sign flips relative to the angle operation.",
+    },
+  ];
+  const q = pick(items);
+  return {
+    prompt: q.prompt,
+    answerType: "multiple-choice",
+    choices: mc(q.correct, q.distractors),
+    hints: [
+      `Break the angle into two known ones ($30^\\circ$, $45^\\circ$, $60^\\circ$) if it isn't already split.`,
+      `Sine: same sign, mixed functions. Cosine: flipped sign, matched functions.`,
+    ],
+    explanation: q.explanation,
+  };
+};
+
+const doubleAngleFormula: Generator = (): Problem => {
+  const [a, b, c] = pick(TRIG_TRIPLES);
+  const quadrant = pick([1, 2]);
+  const sinNum = a; // sine positive in QI and QII
+  const cosNum = quadrant === 1 ? b : -b;
+  const which = pick(["sin", "cos"]);
+  const frac = (n: number, d: number) => `${n < 0 ? "-" : ""}\\dfrac{${abs(n)}}{${d}}`;
+  const quadName = quadrant === 1 ? "I" : "II";
+  if (which === "sin") {
+    const val = 2 * sinNum * cosNum;
+    return {
+      prompt: `If $\\sin\\theta = ${frac(sinNum, c)}$ and $\\theta$ is in Quadrant ${quadName}, find $\\sin 2\\theta$. Enter a fraction like 24/25 or -24/25.`,
+      answerType: "numeric",
+      numericAnswer: val / (c * c),
+      answerDisplay: `$${frac(val, c * c)}$`,
+      hints: [
+        `First find $\\cos\\theta$ from $\\sin^2\\theta + \\cos^2\\theta = 1$ (mind the quadrant sign).`,
+        `Then $\\sin 2\\theta = 2\\sin\\theta\\cos\\theta = 2\\cdot${frac(sinNum, c)}\\cdot${frac(cosNum, c)}$.`,
+      ],
+      explanation: `In Quadrant ${quadName}, $\\cos\\theta = ${frac(cosNum, c)}$. Then $\\sin 2\\theta = 2\\cdot${frac(sinNum, c)}\\cdot${frac(cosNum, c)} = ${frac(val, c * c)}$.`,
+    };
+  }
+  const val = cosNum * cosNum - sinNum * sinNum;
+  return {
+    prompt: `If $\\sin\\theta = ${frac(sinNum, c)}$ and $\\theta$ is in Quadrant ${quadName}, find $\\cos 2\\theta$. Enter a fraction like 7/25 or -7/25.`,
+    answerType: "numeric",
+    numericAnswer: val / (c * c),
+    answerDisplay: `$${frac(val, c * c)}$`,
+    hints: [
+      `Use the form that needs only sine: $\\cos 2\\theta = 1 - 2\\sin^2\\theta$.`,
+      `$\\cos 2\\theta = 1 - 2\\left(${frac(sinNum, c)}\\right)^2 = 1 - \\dfrac{${2 * sinNum * sinNum}}{${c * c}}$.`,
+    ],
+    explanation: `$\\cos 2\\theta = 1 - 2\\sin^2\\theta = 1 - \\dfrac{${2 * sinNum * sinNum}}{${c * c}} = ${frac(val, c * c)}$. (The quadrant doesn't matter here because sine is squared.)`,
+  };
+};
+
+const halfAngleFormula: Generator = (): Problem => {
+  const items: { prompt: string; correct: string; distractors: { label: string; misconception: string }[]; explanation: string }[] = [
+    {
+      prompt: "Using a half-angle formula, find the exact value of $\\cos(15^\\circ)$.",
+      correct: "$\\dfrac{\\sqrt{2+\\sqrt{3}}}{2}$",
+      distractors: [
+        { label: "$\\dfrac{\\sqrt{2-\\sqrt{3}}}{2}$", misconception: "That's $\\sin(15^\\circ)$ — cosine's half-angle uses $1 + \\cos\\theta$." },
+        { label: "$-\\dfrac{\\sqrt{2+\\sqrt{3}}}{2}$", misconception: "$15^\\circ$ lands in Quadrant I, so its cosine is positive." },
+        { label: "$\\dfrac{2+\\sqrt{3}}{4}$", misconception: "Don't drop the outer square root: $\\sqrt{\\frac{1+\\cos 30^\\circ}{2}}$ stays a radical." },
+      ],
+      explanation: "$\\cos 15^\\circ = \\sqrt{\\frac{1+\\cos 30^\\circ}{2}} = \\sqrt{\\frac{2+\\sqrt3}{4}} = \\frac{\\sqrt{2+\\sqrt3}}{2}$, positive because $15^\\circ$ is in Quadrant I.",
+    },
+    {
+      prompt: "Using a half-angle formula, find the exact value of $\\sin(15^\\circ)$.",
+      correct: "$\\dfrac{\\sqrt{2-\\sqrt{3}}}{2}$",
+      distractors: [
+        { label: "$\\dfrac{\\sqrt{2+\\sqrt{3}}}{2}$", misconception: "That's $\\cos(15^\\circ)$ — sine's half-angle uses $1 - \\cos\\theta$." },
+        { label: "$-\\dfrac{\\sqrt{2-\\sqrt{3}}}{2}$", misconception: "$15^\\circ$ lands in Quadrant I, so its sine is positive." },
+        { label: "$\\dfrac{2-\\sqrt{3}}{4}$", misconception: "Don't drop the outer square root: $\\sqrt{\\frac{1-\\cos 30^\\circ}{2}}$ stays a radical." },
+      ],
+      explanation: "$\\sin 15^\\circ = \\sqrt{\\frac{1-\\cos 30^\\circ}{2}} = \\sqrt{\\frac{2-\\sqrt3}{4}} = \\frac{\\sqrt{2-\\sqrt3}}{2}$, positive because $15^\\circ$ is in Quadrant I.",
+    },
+    {
+      prompt: "Using a half-angle formula, find the exact value of $\\sin(22.5^\\circ)$.",
+      correct: "$\\dfrac{\\sqrt{2-\\sqrt{2}}}{2}$",
+      distractors: [
+        { label: "$\\dfrac{\\sqrt{2+\\sqrt{2}}}{2}$", misconception: "That's $\\cos(22.5^\\circ)$ — sine's half-angle uses $1 - \\cos\\theta$." },
+        { label: "$\\dfrac{\\sqrt{2}}{4}$", misconception: "Work through $\\sqrt{\\frac{1-\\cos 45^\\circ}{2}}$ carefully — the nested radical survives." },
+        { label: "$-\\dfrac{\\sqrt{2-\\sqrt{2}}}{2}$", misconception: "$22.5^\\circ$ lands in Quadrant I, so its sine is positive." },
+      ],
+      explanation: "$\\sin 22.5^\\circ = \\sqrt{\\frac{1-\\cos 45^\\circ}{2}} = \\sqrt{\\frac{2-\\sqrt2}{4}} = \\frac{\\sqrt{2-\\sqrt2}}{2}$.",
+    },
+    {
+      prompt: "Which formula gives $\\tan\\dfrac{\\theta}{2}$ without a $\\pm$ sign choice?",
+      correct: "$\\dfrac{1-\\cos\\theta}{\\sin\\theta}$",
+      distractors: [
+        { label: "$\\pm\\sqrt{\\dfrac{1-\\cos\\theta}{2}}$", misconception: "That's the sine half-angle formula; the tangent form avoids the radical entirely." },
+        { label: "$\\dfrac{\\sin\\theta}{1-\\cos\\theta}$", misconception: "The numerator and denominator are flipped — check with $\\theta = 90^\\circ$." },
+        { label: "$\\dfrac{2\\tan\\theta}{1-\\tan^2\\theta}$", misconception: "That's the double-angle formula for tangent, going the other direction." },
+      ],
+      explanation: "$\\tan\\frac{\\theta}{2} = \\frac{1-\\cos\\theta}{\\sin\\theta} = \\frac{\\sin\\theta}{1+\\cos\\theta}$ — the sign comes out automatically.",
+    },
+  ];
+  const q = pick(items);
+  return {
+    prompt: q.prompt,
+    answerType: "multiple-choice",
+    choices: mc(q.correct, q.distractors),
+    hints: [
+      `Half-angle: $\\sin\\frac{\\theta}{2} = \\pm\\sqrt{\\frac{1-\\cos\\theta}{2}}$, $\\cos\\frac{\\theta}{2} = \\pm\\sqrt{\\frac{1+\\cos\\theta}{2}}$.`,
+      `Pick the sign from the quadrant where $\\frac{\\theta}{2}$ (not $\\theta$) lands.`,
+    ],
+    explanation: q.explanation,
+  };
+};
+
+const verifySolveIdentity: Generator = (): Problem => {
+  const items: { prompt: string; correct: string; distractors: { label: string; misconception: string }[]; explanation: string }[] = [
+    {
+      prompt: "Solve $2\\sin^2\\theta - \\sin\\theta - 1 = 0$ on $[0, 2\\pi)$.",
+      correct: "$\\theta = \\dfrac{\\pi}{2},\\ \\dfrac{7\\pi}{6},\\ \\dfrac{11\\pi}{6}$",
+      distractors: [
+        { label: "$\\theta = \\dfrac{\\pi}{2},\\ \\dfrac{\\pi}{6},\\ \\dfrac{5\\pi}{6}$", misconception: "$\\sin\\theta = -\\frac{1}{2}$ has solutions in Quadrants III and IV, not I and II." },
+        { label: "$\\theta = \\dfrac{\\pi}{2}$", misconception: "The factor $2\\sin\\theta + 1 = 0$ contributes two more solutions." },
+        { label: "$\\theta = \\dfrac{7\\pi}{6},\\ \\dfrac{11\\pi}{6}$", misconception: "The factor $\\sin\\theta - 1 = 0$ contributes $\\theta = \\frac{\\pi}{2}$ as well." },
+      ],
+      explanation: "Factor: $(2\\sin\\theta+1)(\\sin\\theta-1)=0$, so $\\sin\\theta = -\\frac{1}{2}$ (QIII, QIV: $\\frac{7\\pi}{6}, \\frac{11\\pi}{6}$) or $\\sin\\theta = 1$ ($\\frac{\\pi}{2}$).",
+    },
+    {
+      prompt: "Solve $2\\cos^2\\theta - 1 = 0$ on $[0, 2\\pi)$.",
+      correct: "$\\theta = \\dfrac{\\pi}{4},\\ \\dfrac{3\\pi}{4},\\ \\dfrac{5\\pi}{4},\\ \\dfrac{7\\pi}{4}$",
+      distractors: [
+        { label: "$\\theta = \\dfrac{\\pi}{4},\\ \\dfrac{7\\pi}{4}$", misconception: "$\\cos\\theta = -\\frac{\\sqrt2}{2}$ also solves the equation — include Quadrants II and III." },
+        { label: "$\\theta = \\dfrac{\\pi}{3},\\ \\dfrac{2\\pi}{3},\\ \\dfrac{4\\pi}{3},\\ \\dfrac{5\\pi}{3}$", misconception: "$\\cos\\theta = \\pm\\frac{\\sqrt2}{2}$ points to $45^\\circ$-family angles, not $60^\\circ$." },
+        { label: "$\\theta = \\dfrac{\\pi}{4}$", misconception: "A squared trig equation typically has four solutions on $[0, 2\\pi)$." },
+      ],
+      explanation: "$\\cos^2\\theta = \\frac{1}{2}$ gives $\\cos\\theta = \\pm\\frac{\\sqrt2}{2}$, hitting all four $45^\\circ$-family angles.",
+    },
+    {
+      prompt: "Solve $\\sin 2\\theta = \\cos\\theta$ on $[0, 2\\pi)$.",
+      correct: "$\\theta = \\dfrac{\\pi}{2},\\ \\dfrac{3\\pi}{2},\\ \\dfrac{\\pi}{6},\\ \\dfrac{5\\pi}{6}$",
+      distractors: [
+        { label: "$\\theta = \\dfrac{\\pi}{6},\\ \\dfrac{5\\pi}{6}$", misconception: "Don't divide by $\\cos\\theta$ — that discards the solutions where $\\cos\\theta = 0$." },
+        { label: "$\\theta = \\dfrac{\\pi}{2},\\ \\dfrac{3\\pi}{2}$", misconception: "The factor $2\\sin\\theta - 1 = 0$ contributes two more solutions." },
+        { label: "$\\theta = \\dfrac{\\pi}{3},\\ \\dfrac{2\\pi}{3}$", misconception: "$\\sin\\theta = \\frac{1}{2}$ points to the $30^\\circ$ family, not $60^\\circ$." },
+      ],
+      explanation: "Use $\\sin 2\\theta = 2\\sin\\theta\\cos\\theta$: $\\cos\\theta(2\\sin\\theta - 1) = 0$, so $\\cos\\theta = 0$ or $\\sin\\theta = \\frac{1}{2}$.",
+    },
+    {
+      prompt: "To verify $\\dfrac{\\sin\\theta}{1-\\cos\\theta} = \\dfrac{1+\\cos\\theta}{\\sin\\theta}$, which is a valid first step?",
+      correct: "Multiply $\\dfrac{\\sin\\theta}{1-\\cos\\theta}$ by $\\dfrac{1+\\cos\\theta}{1+\\cos\\theta}$",
+      distractors: [
+        { label: "Cross-multiply both sides and simplify", misconception: "Verifying an identity means transforming one side — cross-multiplying assumes the identity is already true." },
+        { label: "Substitute $\\theta = \\tfrac{\\pi}{4}$ into both sides", misconception: "One value checking out doesn't prove the identity for all $\\theta$." },
+        { label: "Add $\\cos\\theta$ to both sides", misconception: "Moving terms across the equals sign assumes what you're trying to prove." },
+      ],
+      explanation: "Multiplying by the conjugate gives $\\frac{\\sin\\theta(1+\\cos\\theta)}{1-\\cos^2\\theta} = \\frac{\\sin\\theta(1+\\cos\\theta)}{\\sin^2\\theta} = \\frac{1+\\cos\\theta}{\\sin\\theta}$ — one side transformed into the other.",
+    },
+    {
+      prompt: "Simplify $\\dfrac{1 - \\sin^2\\theta}{\\cos\\theta}$.",
+      correct: "$\\cos\\theta$",
+      distractors: [
+        { label: "$\\sec\\theta$", misconception: "The Pythagorean identity puts $\\cos^2\\theta$ on top; one cosine cancels, leaving cosine, not its reciprocal." },
+        { label: "$\\sin\\theta$", misconception: "$1 - \\sin^2\\theta$ equals $\\cos^2\\theta$, not $\\sin^2\\theta$." },
+        { label: "$1 - \\sin\\theta$", misconception: "$1 - \\sin^2\\theta$ doesn't split as $(1-\\sin\\theta)$ alone — it factors as a difference of squares equal to $\\cos^2\\theta$." },
+      ],
+      explanation: "$1 - \\sin^2\\theta = \\cos^2\\theta$, so the expression is $\\frac{\\cos^2\\theta}{\\cos\\theta} = \\cos\\theta$.",
+    },
+    {
+      prompt: "Simplify $\\sec^2\\theta - \\tan^2\\theta$.",
+      correct: "$1$",
+      distractors: [
+        { label: "$\\sec\\theta\\tan\\theta$", misconception: "This is a direct Pythagorean identity, not a product: $1 + \\tan^2\\theta = \\sec^2\\theta$." },
+        { label: "$\\cos^2\\theta$", misconception: "Rearranging $1 + \\tan^2\\theta = \\sec^2\\theta$ leaves exactly $1$." },
+        { label: "$\\sin^2\\theta$", misconception: "Rearranging $1 + \\tan^2\\theta = \\sec^2\\theta$ leaves exactly $1$." },
+      ],
+      explanation: "From $1 + \\tan^2\\theta = \\sec^2\\theta$: $\\sec^2\\theta - \\tan^2\\theta = 1$.",
+    },
+  ];
+  const q = pick(items);
+  return {
+    prompt: q.prompt,
+    answerType: "multiple-choice",
+    choices: mc(q.correct, q.distractors),
+    hints: [
+      `Rewrite in sine and cosine, look for a Pythagorean identity, and factor like a quadratic when possible.`,
+      `When solving, never divide by a trig factor that could be zero — factor it out instead.`,
+    ],
+    explanation: q.explanation,
+  };
+};
+
 // ================= UNIT 4 — Vectors / Parametric / Polar =================
 
 const vectorMagnitude: Generator = (): Problem => {
@@ -1213,6 +1629,13 @@ export const GENERATORS: Record<string, Generator> = {
   compoundGrowth,
   degToRad,
   unitCircleValue,
+  reciprocalQuotientIdentity,
+  pythagoreanIdentity,
+  evenOddCofunction,
+  sumDifferenceFormula,
+  doubleAngleFormula,
+  halfAngleFormula,
+  verifySolveIdentity,
   vectorMagnitude,
   vectorAdd,
   determinant2x2,

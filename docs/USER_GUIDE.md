@@ -1,4 +1,4 @@
-# 📗 User Guide — Shree Shetty's Precalc Tutor (v1.0.0)
+# 📗 User Guide — Shree Shetty's Precalc Tutor (v1.2.0)
 
 **Audience:** students and parents using the app.
 *(Administrators/builders: see `SOP_Precalc_Tutor_Operations.md` instead.)*
@@ -10,7 +10,7 @@
 A complete high-school math course on your computer:
 **Foundations → Precalculus → your first real Calculus.**
 
-- **12 units, 38 skills** — each unit unlocks when you master the one before it
+- **13 units, 50 skills** — each unit unlocks when you master the one before it
 - **Unlimited practice** — problems are auto-generated, never the same twice
 - **Mixed Review** — old skills resurface on a smart schedule so you don't forget
 - **Works offline** — internet is needed only at the moment you sign in
@@ -41,7 +41,7 @@ A complete high-school math course on your computer:
 
 ### Option A — Install it (recommended for your own laptop)
 
-1. Get `Shree Shetty's Precalc Tutor-1.0.0-x64.exe` from the administrator
+1. Get `Shree Shetty's Precalc Tutor-1.2.0-x64.exe` from the administrator
    (USB stick, email, or cloud link).
 2. **Double-click** the `.exe`.
 3. A blue **Windows SmartScreen** warning may appear
@@ -58,7 +58,7 @@ A complete high-school math course on your computer:
 
 ### Option B — Portable (run from a folder or USB, nothing installed)
 
-1. Get `Shree Shetty's Precalc Tutor-1.0.0-x64.zip`.
+1. Get `Shree Shetty's Precalc Tutor-1.2.0-x64.zip`.
 2. Right-click the zip → **Extract All…** → choose any folder → **Extract**.
 3. Open the extracted folder and double-click **`Shree Shetty's Precalc Tutor.exe`**.
    (Same SmartScreen note as above: More info → Run anyway.)
@@ -91,7 +91,7 @@ A complete high-school math course on your computer:
 
 ### 5.1 Home screen
 - Enter your name the first time (**Set your name**) — the app greets you with it.
-- You'll see all **12 units** listed. Unit 0 is open; the rest show 🔒 until you
+- You'll see all **13 units** listed. Unit 0 is open; the rest show 🔒 until you
   master everything in the unit before them.
 - Each unlocked unit shows a **progress bar** and a mastered count like `2/4`.
 
@@ -165,4 +165,4 @@ The administrator: **shreenathacc22@gmail.com**.
 
 ---
 
-*Guide version 1.0 · July 11, 2026 · matches app v1.0.0*
+*Guide version 1.0 · July 11, 2026 · matches app v1.2.0*

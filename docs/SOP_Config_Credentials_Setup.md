@@ -1,7 +1,7 @@
 # 📙 SOP — Filling in config.json with Google Credentials (Worked Example)
 
 **Document version:** 1.0 · **Date:** July 11, 2026 · **Owner:** Shree Shetty
-**Applies to:** Shree Shetty's Precalc Tutor v1.0.0 · **Time needed:** ~2 minutes (after SOP-2 credentials exist)
+**Applies to:** Shree Shetty's Precalc Tutor v1.2.0 · **Time needed:** ~2 minutes (after SOP-2 credentials exist)
 
 ---
 

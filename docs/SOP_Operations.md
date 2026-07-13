@@ -1,7 +1,7 @@
 # 📘 SOP — Shree Shetty's Precalc Tutor: Operations Manual
 
 **Document version:** 1.0 · **Date:** July 11, 2026 · **Owner:** Shree Shetty (shreenathacc22@gmail.com)
-**App version covered:** 1.0.0
+**App version covered:** 1.2.0
 
 ---
 
@@ -33,8 +33,8 @@ This SOP covers every routine operation for the Precalc Tutor desktop app:
 | Asset | Location |
 |---|---|
 | **Distribution folder** (share this) | `MCC_Highschool_Math_package\Windows-Installer\` |
-| — Installer | `Shree Shetty's Precalc Tutor-1.0.0-x64.exe` (96 MB) |
-| — Portable | `Shree Shetty's Precalc Tutor-1.0.0-x64.zip` (134 MB) |
+| — Installer | `Shree Shetty's Precalc Tutor-1.2.0-x64.exe` (96 MB) |
+| — Portable | `Shree Shetty's Precalc Tutor-1.2.0-x64.zip` (134 MB) |
 | Web-app source code | `MCC_Highschool_Math_package\highschool-precalculus-tutor\` |
 | Electron build workshop | `C:\Users\shree\TutorBuild\` (outside OneDrive on purpose) |
 | Built artifacts backup | `C:\Users\shree\TutorBuild\release\` |
@@ -59,7 +59,7 @@ Nothing else (no Node, no Python) is needed on the target laptop.
 2. **OneDrive check:** both big files must show ✅ (not ☁️). If ☁️: right-click →
    *Always keep on this device*, wait for download.
 3. Copy the entire `Windows-Installer` folder to USB / email / cloud.
-4. On the target laptop, double-click `Shree Shetty's Precalc Tutor-1.0.0-x64.exe`.
+4. On the target laptop, double-click `Shree Shetty's Precalc Tutor-1.2.0-x64.exe`.
 5. SmartScreen warning appears → click **More info → Run anyway**
    *(expected — app is self-built, not code-signed)*.
 6. Pick install folder (default is fine) → **Install**.
@@ -70,7 +70,7 @@ Nothing else (no Node, no Python) is needed on the target laptop.
 
 ### Method B — Portable (no install, any laptop, USB-friendly)
 
-1. Copy `Shree Shetty's Precalc Tutor-1.0.0-x64.zip` to the target laptop.
+1. Copy `Shree Shetty's Precalc Tutor-1.2.0-x64.zip` to the target laptop.
 2. Right-click → **Extract All** → choose any folder (e.g. `C:\Apps\Tutor`).
 3. Run `Shree Shetty's Precalc Tutor.exe` inside the extracted folder.
 4. Complete SOP-3 before first login.
@@ -237,10 +237,11 @@ Target: `github.com/shreenathacc22/Shree-softwares`, branch
 
 | Date | Version | Change |
 |---|---|---|
-| 2026-07-09 | 1.0.0 | Initial web app, 12 units / 38 skills, all 8 bugs fixed |
-| 2026-07-10 | 1.0.0 | Windows packaging (Electron 43): installer + portable, Google Sign-In gate |
-| 2026-07-11 | 1.0.0 | GitHub publish (sanitized) → Shree-softwares / highschool_pre_cal_program_l1_l2 |
+| 2026-07-09 | 1.2.0 | Initial web app, 13 units / 50 skills, all 8 bugs fixed |
+| 2026-07-10 | 1.2.0 | Windows packaging (Electron 43): installer + portable, Google Sign-In gate |
+| 2026-07-11 | 1.2.0 | GitHub publish (sanitized) → Shree-softwares / highschool_pre_cal_program_l1_l2 |
 | 2026-07-11 | 1.0.0 | Full doc set (START_HERE, User Guide, 2 SOPs) shipped + pushed; placeholder config.json created at `%APPDATA%\Shree Shetty's Precalc Tutor\` and launch-verified |
+| 2026-07-12 | 1.2.0 | v1.2 content merged from repo (7 trig-identity skills → 13 units / 50 skills; macOS build added upstream); Windows installer + portable rebuilt as 1.2.0, smoke-tested, distribution folder refreshed |
 
 **Open items:**
 - [ ] SOP-2 not yet executed — create Google Client ID (browser, ~5 min), then fill the

@@ -1,4 +1,4 @@
-# 🚀 START HERE — Shree Shetty's Precalc Tutor v1.0.0
+# 🚀 START HERE — Shree Shetty's Precalc Tutor v1.2.0
 
 **Pick your document based on who you are:**
 
@@ -14,11 +14,12 @@
 
 | File | Purpose |
 |---|---|
-| `Shree Shetty's Precalc Tutor-1.0.0-x64.exe` | Installer — double-click on any Windows 10/11 64-bit laptop |
-| `Shree Shetty's Precalc Tutor-1.0.0-x64.zip` | Portable — extract & run, no install |
+| `Shree Shetty's Precalc Tutor-1.2.0-x64.exe` | Installer — double-click on any Windows 10/11 64-bit laptop |
+| `Shree Shetty's Precalc Tutor-1.2.0-x64.zip` | Portable — extract & run, no install |
 | `config.template.json` | Template for the Google credentials file |
 | `USER_GUIDE_Precalc_Tutor.md` | Student/parent guide |
 | `SOP_Precalc_Tutor_Operations.md` | Administrator operations manual |
+| `SOP_Config_Credentials_Setup.md` | Filling config.json — worked example + checklist |
 | `GOOGLE_OAUTH_SETUP.md` | Google sign-in setup walkthrough |
 | `README_INSTALL.txt` | Quick install reference |
 

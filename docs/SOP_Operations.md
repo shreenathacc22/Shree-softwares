@@ -247,8 +247,8 @@ Target: `github.com/shreenathacc22/Shree-softwares`, branch
 - [ ] SOP-2 not yet executed — create Google Client ID (browser, ~5 min), then fill the
       already-created placeholder config.json per `SOP_Config_Credentials_Setup.md`.
       **Login is blocked until this is done.**
-- [ ] Decide GitHub repo visibility (currently **public**; flip via repo Settings →
-      Danger Zone → Change visibility, or ask Claude to do it via API)
+- [x] GitHub repo visibility — **decided 2026-07-12: stays PUBLIC** (code is fully
+      sanitized; only the placeholder credential template is committed)
 
 ---
 

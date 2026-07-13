@@ -240,10 +240,14 @@ Target: `github.com/shreenathacc22/Shree-softwares`, branch
 | 2026-07-09 | 1.0.0 | Initial web app, 12 units / 38 skills, all 8 bugs fixed |
 | 2026-07-10 | 1.0.0 | Windows packaging (Electron 43): installer + portable, Google Sign-In gate |
 | 2026-07-11 | 1.0.0 | GitHub publish (sanitized) → Shree-softwares / highschool_pre_cal_program_l1_l2 |
+| 2026-07-11 | 1.0.0 | Full doc set (START_HERE, User Guide, 2 SOPs) shipped + pushed; placeholder config.json created at `%APPDATA%\Shree Shetty's Precalc Tutor\` and launch-verified |
 
 **Open items:**
-- [ ] SOP-2 not yet executed — Google Client ID still pending → login blocked until done
-- [ ] Decide GitHub repo visibility (currently **public**)
+- [ ] SOP-2 not yet executed — create Google Client ID (browser, ~5 min), then fill the
+      already-created placeholder config.json per `SOP_Config_Credentials_Setup.md`.
+      **Login is blocked until this is done.**
+- [ ] Decide GitHub repo visibility (currently **public**; flip via repo Settings →
+      Danger Zone → Change visibility, or ask Claude to do it via API)
 
 ---
 
